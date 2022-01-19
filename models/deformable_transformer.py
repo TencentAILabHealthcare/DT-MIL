@@ -66,7 +66,6 @@ class DeformableTransformer(nn.Module):
                                                           num_feature_levels, nhead, enc_n_points)
         self.encoder = DeformableTransformerEncoder(encoder_layer, num_encoder_layers)
 
-
         decoder_layer = NonDeformableTransformerDecoderLayer(d_model, dim_feedforward, dropout,
                                                              activation, num_feature_levels, nhead, dec_n_points)
 

@@ -41,9 +41,8 @@ def convert_feature_seq2_map(feature_seq: Tensor, loc: Tensor, seq_mask: Tensor,
                 r_list.append(r)
                 c_list.append(c)
                 filled = True
-                ret_map[b_idx, :, r * h:(r + 1) * h, c * w:(c + 1) * w] = ret_map[b_idx, :, r * h:(r + 1) * h,
-                                                                          c * w:(c + 1) * w] + scale_feature[
-                                                                              b_idx, seq_idx]
+                ret_map[b_idx, :, r * h:(r + 1) * h, c * w:(c + 1) * w] = \
+                    ret_map[b_idx, :, r * h:(r + 1) * h, c * w:(c + 1) * w] + scale_feature[b_idx, seq_idx]
 
                 padding_mask[b_idx, r * h:(r + 1) * h, c * w:(c + 1) * w] = 1
 

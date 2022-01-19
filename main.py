@@ -26,7 +26,6 @@ from models import build_wsi_feat
 import pprint
 
 
-
 def get_args_parser():
     parser = argparse.ArgumentParser('Deformable Transformer MIL', add_help=False)
     parser.add_argument('--lr', default=2e-4, type=float)
@@ -127,7 +126,6 @@ def main(args):
     np.random.seed(seed)
     random.seed(seed)
 
-
     print(f'Build Model: {args.model_name}')
     if args.model_name == 'transformer':
         model, criterion = build_wsi_feat(args)
@@ -137,7 +135,7 @@ def main(args):
         model, criterion = build_pure_transformer(args)
         model.to(device)
     else:
-        raise ValueError(f'Model name not found')
+        raise ValueError('Model name not found')
 
     model_without_ddp = model
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -157,11 +155,9 @@ def main(args):
                                   drop_last=False, collate_fn=utils.collate_fn, num_workers=args.num_workers,
                                   pin_memory=True)
 
-
     if args.distributed:
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu])
         model_without_ddp = model.module
-
 
     checkpoint = torch.load(args.frozen_weights, map_location='cpu')
 
@@ -173,7 +169,8 @@ def main(args):
         print('Unexpected Keys: {}'.format(unexpected_keys))
 
     time_now = datetime.datetime.now()
-    args.output_dir = osp.join(args.output_dir, f'{time_now.year}_{time_now.month}_{time_now.day}_{time_now.hour}_{time_now.minute}')
+    args.output_dir = osp.join(args.output_dir,
+                               f'{time_now.year}_{time_now.month}_{time_now.day}_{time_now.hour}_{time_now.minute}')
     os.makedirs(args.output_dir, exist_ok=True)
 
     args_dict = vars(args)
@@ -181,12 +178,13 @@ def main(args):
         pprint.pprint(args_dict, indent=4, stream=outfile)
 
     eval_result = evaluate(model, criterion,
-                                       data_loader_test, device, args.output_dir,
-                                       args.distributed,
-                                       display_header="Test",
-                                       is_last_eval=True,
-                                       save_path=args.output_dir
-                                       )
+                           data_loader_test, device, args.output_dir,
+                           args.distributed,
+                           display_header="Test",
+                           is_last_eval=True,
+                           save_path=args.output_dir
+                           )
+    print(eval_result)
 
 
 if __name__ == '__main__':

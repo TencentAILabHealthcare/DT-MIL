@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 # DT-MIL
 # Copyright (c) 2021 Tencent. All Rights Reserved.
 # ------------------------------------------------------------------------------------
@@ -18,11 +18,10 @@ This script will merge the offline patch features within same WSI into one file
 
 import os
 import os.path as osp
-
-import pickle
 from glob import glob
 from multiprocessing import Pool
 
+import pickle
 from rich import print
 from rich.progress import track
 
@@ -40,6 +39,7 @@ for fp in file_name:
 
 feat_save_dirx20 = './data/extracted_20_features'
 merge_feat_save_dirx20 = './data/extracted_20_feat_merge'
+
 
 def merge_wsi_feat(wsi_feat_dir) -> None:
     """
@@ -78,10 +78,11 @@ def merge_wsi_feat(wsi_feat_dir) -> None:
     with open(save_fp, 'wb') as outfile:
         pickle.dump(save_obj, outfile)
 
+
 if __name__ == '__main__':
     for feat_save_dir, merge_feat_save_dir in zip(
-        [feat_save_dirx20, ],
-        [merge_feat_save_dirx20]
+            [feat_save_dirx20, ],
+            [merge_feat_save_dirx20]
     ):
         print(f'Save to {merge_feat_save_dir}')
         os.makedirs(merge_feat_save_dir, exist_ok=True)

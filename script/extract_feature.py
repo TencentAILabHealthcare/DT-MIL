@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 # DT-MIL
 # Copyright (c) 2021 Tencent. All Rights Reserved.
 # ------------------------------------------------------------------------------------
@@ -6,29 +6,30 @@
 """
 Extract feature offline
 """
-import os, sys, inspect
+import inspect
+import os
+import sys
 
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 import os.path as osp
-
 import random
+from glob import glob
+from concurrent.futures import ThreadPoolExecutor
+
 import cv2
 import numpy as np
-from glob import glob
 import pickle
-
 import torch
 from torch import nn
 import torch.utils.data as data_utils
-
 from albumentations.pytorch import ToTensorV2
 import albumentations as alb
 from efficientnet_pytorch import EfficientNet
 from rich import progress
-from concurrent.futures import ThreadPoolExecutor
+
 
 tr_trans = alb.Compose([
     alb.Resize(512, 512),
@@ -79,7 +80,8 @@ def save_feat_in_thread(batch_pid, batch_img_bname, batch_tr_feat, save_dir):
             try:
                 with open(feat_save_name, 'rb') as infile:
                     save_dict = pickle.load(infile)
-            except:
+            except Exception as e:
+                print(e)
                 save_dict = {}
         else:
             save_dict = {}
@@ -189,7 +191,7 @@ if __name__ == "__main__":
             lines = [x.strip() for x in lines]
         img_fp_list.extend(lines)
 
-    print('Len of img '.format(len(img_fp_list)))
+    print('Len of img {}'.format(len(img_fp_list)))
 
     img_fp_list = sorted(img_fp_list)
     pred_and_save_with_dataloader(model, img_fp_list, save_dir=save_dir)
