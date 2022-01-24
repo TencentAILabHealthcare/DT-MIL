@@ -1,12 +1,13 @@
 # DT-MIL
 
-This repository is an official PyTorch implementation of the paper 
-**"DT-MIL: Deformable Transformer for Multi-instance Learning on Histopathological Image"** [paper](https://link.springer.com/chapter/10.1007/978-3-030-87237-3_20) 
+This repository is an official PyTorch implementation of the paper
+**"DT-MIL: Deformable Transformer for Multi-instance Learning on Histopathological Image"** [paper](https://link.springer.com/chapter/10.1007/978-3-030-87237-3_20)
 from **MICCAI 2021**.
 
 ![](./figs/arch.png)
 
 ## Citation
+
 ```bibtex
 @inproceedings{li2021dt,
   title={DT-MIL: Deformable Transformer for Multi-instance Learning on Histopathological Image},
@@ -18,9 +19,10 @@ from **MICCAI 2021**.
 }
 ```
 
-
 ## Installation
+
 ### Dependencies
+
 * Python 3.6
 * PyTorch >= 1.5.0
 * einops
@@ -33,8 +35,8 @@ from **MICCAI 2021**.
 * efficientnet_pytorch
 * yacs
 
-
 ### Compiling
+
 ```shell script
 cd ./models/ops
 bash ./make.sh
@@ -45,7 +47,6 @@ python3 test.py
 ## Usage
 
 ### Inference
-
 
 ```shell script
 EXP_DIR=<path/to/result/save/dir>
@@ -65,7 +66,6 @@ python3 -u main.py \
 You can refer the code in `script/extract_feature.py` and `script/merge_patch_feat.py` to process your own data.
 
 We also include sample data downloaded from [TCIA CPTAC Pathology Portal](https://cancerimagingarchive.net/datascope/cptac/home/) for testing, which are stored in the `./data` folder.
-
 
 ## Disclaimer
 

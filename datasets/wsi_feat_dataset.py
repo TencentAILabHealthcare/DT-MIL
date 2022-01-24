@@ -3,15 +3,16 @@
 # Copyright (c) 2021 Tencent. All Rights Reserved.
 # ------------------------------------------------------------------------
 
-import torch
 import os.path as osp
-import torch.utils.data as data_utils
-from util.misc import get_local_rank, get_local_size
-
 import re
 from typing import Tuple
+
+import torch
+import torch.utils.data as data_utils
 import numpy as np
 import pickle
+
+from util.misc import get_local_rank, get_local_size
 from util import numpy_img_aug as tensor_aug
 
 
@@ -85,8 +86,8 @@ class WSIFeatDataset(data_utils.Dataset):
 
             max_r = max([x[0] for x in patch_loc])
             max_c = max([x[1] for x in patch_loc])
-        except:
-            raise ValueError(f'Error in {image_id} at {patch_feat_fp}')
+        except Exception as e:
+            raise ValueError(f'Error in {image_id} at {patch_feat_fp}, Error message: {e}')
 
         feat_map = np.zeros((max_r + 1, max_c + 1, num_channels))
 

@@ -10,16 +10,23 @@
 Backbone modules.
 """
 
+from typing import Dict, List
+import os
+import sys
+
+try:
+    from urllib import urlretrieve
+except ImportError:
+    from urllib.request import urlretrieve
 import torch
 import torch.nn.functional as F
 import torchvision
 from torch import nn
 from torchvision.models._utils import IntermediateLayerGetter
-from typing import Dict, List
 
 from util.misc import NestedTensor, Nested3Tensor
-
 from .position_encoding import build_position_encoding
+from util.feature_seq2_feature_map import convert_feature_seq2_map
 
 
 class FrozenBatchNorm2d(torch.nn.Module):
@@ -91,15 +98,6 @@ class BackboneBase(nn.Module):
         return out
 
 
-import os
-import sys
-
-try:
-    from urllib import urlretrieve
-except ImportError:
-    from urllib.request import urlretrieve
-
-
 def load_url(url, model_dir='../pretrained', map_location=None):
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
@@ -151,9 +149,6 @@ class Joiner(nn.Sequential):
             pos.append(self[1](x).to(x.tensors.dtype))
 
         return out, pos
-
-
-from util.feature_seq2_feature_map import convert_feature_seq2_map
 
 
 class WSIJoiner(nn.Sequential):
@@ -247,7 +242,7 @@ def build_backbone(args):
     return model
 
 
-def build_WSIBackbone(args):
+def build_wsi_backbone(args):
     position_embedding = build_position_encoding(args)
     train_backbone = args.lr_backbone > 0
     return_interm_layers = args.masks or (args.num_feature_levels > 1)
@@ -256,7 +251,7 @@ def build_WSIBackbone(args):
     return model
 
 
-def build_WSIFeatureMapBackbone(args):
+def build_wsi_feature_map_backbone(args):
     position_embedding = build_position_encoding(args)
     backbone = FeatureMapDrBackbone(num_input_channels=args.num_input_channels, out_channels=args.out_channels)
     model = FeatureMapJoiner(backbone, position_embedding)

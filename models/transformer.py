@@ -27,11 +27,7 @@ class PureTransformer(nn.Module):
         self.mlp = nn.Linear(128, num_classes)
 
     def forward(self, sampler: NestedTensor):
-        # src: (S, N, E)(S,N,E)
-        # tgt: (T, N, E)(T,N,E)
-        # src_mask: (S, S)(S,S)
         x = sampler.tensors
-        #mask = sampler.mask  # N * S
         b, c, h, w = x.shape
         x = x.view(b, c, -1)
         x = x.permute(0, 2, 1)  # N S E
@@ -41,7 +37,6 @@ class PureTransformer(nn.Module):
         tgt = self.cls_token
         tgt = tgt.unsqueeze(0).expand(b, -1, -1)
 
-        # print(x.shape, tgt.shape)
         x = x.permute(1, 0, 2)  # S N E
         tgt = tgt.permute(1, 0, 2)  # S N E
         out = self.transformer(src=x, tgt=tgt)
@@ -49,7 +44,6 @@ class PureTransformer(nn.Module):
         logit = self.mlp(out)
 
         logit = logit.squeeze(0)
-        # print(out.shape)
 
         return logit
 

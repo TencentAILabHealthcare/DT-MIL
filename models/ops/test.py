@@ -10,9 +10,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import division
 
-import time
 import torch
-import torch.nn as nn
 from torch.autograd import gradcheck
 
 from functions.ms_deform_attn_func import MSDeformAttnFunction, ms_deform_attn_core_pytorch
@@ -42,7 +40,8 @@ def check_forward_equal_with_pytorch_double():
     max_rel_err = ((output_cuda - output_pytorch).abs() / output_pytorch.abs()).max()
 
     print(
-        f'* {fwdok} check_forward_equal_with_pytorch_double: max_abs_err {max_abs_err:.2e} max_rel_err {max_rel_err:.2e}')
+        f'* {fwdok} check_forward_equal_with_pytorch_double: '
+        f'max_abs_err {max_abs_err:.2e} max_rel_err {max_rel_err:.2e}')
 
 
 @torch.no_grad()
@@ -60,7 +59,8 @@ def check_forward_equal_with_pytorch_float():
     max_rel_err = ((output_cuda - output_pytorch).abs() / output_pytorch.abs()).max()
 
     print(
-        f'* {fwdok} check_forward_equal_with_pytorch_float: max_abs_err {max_abs_err:.2e} max_rel_err {max_rel_err:.2e}')
+        f'* {fwdok} check_forward_equal_with_pytorch_float: '
+        f'max_abs_err {max_abs_err:.2e} max_rel_err {max_rel_err:.2e}')
 
 
 def check_gradient_numerical(channels=4, grad_value=True, grad_sampling_loc=True, grad_attn_weight=True):
@@ -75,8 +75,8 @@ def check_gradient_numerical(channels=4, grad_value=True, grad_sampling_loc=True
     sampling_locations.requires_grad = grad_sampling_loc
     attention_weights.requires_grad = grad_attn_weight
 
-    gradok = gradcheck(func, (
-    value.double(), shapes, level_start_index, sampling_locations.double(), attention_weights.double(), im2col_step))
+    gradok = gradcheck(func, (value.double(), shapes, level_start_index, sampling_locations.double(),
+                              attention_weights.double(), im2col_step))
 
     print(f'* {gradok} check_gradient_numerical(D={channels})')
 

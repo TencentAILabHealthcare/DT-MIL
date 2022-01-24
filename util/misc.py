@@ -30,7 +30,6 @@ if float(torchvision.__version__[:3]) < 0.5:
     import math
     from torchvision.ops.misc import _NewEmptyTensorOp
 
-
     def _check_size_scale_factor(dim, size, scale_factor):
         # type: (int, Optional[List[int]], Optional[float]) -> None
         if size is None and scale_factor is None:
@@ -42,7 +41,6 @@ if float(torchvision.__version__[:3]) < 0.5:
                 "scale_factor shape must match input shape. "
                 "Input is {}D, scale_factor size is {}".format(dim, len(scale_factor))
             )
-
 
     def _output_size(dim, input, size, scale_factor):
         # type: (int, Tensor, Optional[List[int]], Optional[float]) -> List[int]

@@ -7,17 +7,14 @@
 # -----------------------------------------------------------------------------------------------------------------
 
 from typing import Callable
-
 from functools import wraps
-import torch.distributed as dist
-import torch
-
 import pickle
 from collections import defaultdict
-import numpy as np
 from itertools import chain
 
-
+import torch.distributed as dist
+import torch
+import numpy as np
 
 
 def all_gather(data):

@@ -16,7 +16,7 @@ def to_cuda(samples, targets, device):
     return samples, targets
 
 
-class data_prefetcher():
+class DataPrefetcher:
     def __init__(self, loader, device, prefetch=True):
         self.loader = iter(loader)
         self.prefetch = prefetch
@@ -35,7 +35,6 @@ class data_prefetcher():
 
         with torch.cuda.stream(self.stream):
             self.next_samples, self.next_targets = to_cuda(self.next_samples, self.next_targets, self.device)
-
 
     def next(self):
         if self.prefetch:

@@ -15,7 +15,7 @@ import math
 
 from util.misc import NestedTensor
 
-from .backbone import build_WSIFeatureMapBackbone
+from .backbone import build_wsi_feature_map_backbone
 
 from .deformable_transformer import build_deforamble_transformer
 import copy
@@ -40,7 +40,6 @@ class DeformableTransformerMIL(nn.Module):
         self.num_queries = num_queries
         self.transformer = transformer
         hidden_dim = transformer.d_model
-
 
         # Modify class_embed for all queries embbeding，and then perform classification on the whole WSI
         self.class_embed = nn.Linear(hidden_dim * num_queries, num_classes)
@@ -87,7 +86,6 @@ class DeformableTransformerMIL(nn.Module):
 
         self.class_embed = nn.ModuleList([self.class_embed for _ in range(num_pred)])
 
-
     def forward(self, samples: NestedTensor):
         """ The forward expects a NestedTensor, which consists of:
                - samples.tensor: batched images, of shape [batch_size x 3 x H x W]
@@ -108,22 +106,18 @@ class DeformableTransformerMIL(nn.Module):
 
         srcs = []
         masks = []
-        for l, feat in enumerate(features):
+        for idx, feat in enumerate(features):
             src, mask = feat.decompose()
-
-            # src.requires_grad_(False)
-            # mask.requires_grad_(False)
-            # print(src.shape)
-            srcs.append(self.input_proj[l](src))
+            srcs.append(self.input_proj[idx](src))
             masks.append(mask)
             assert mask is not None
         if self.num_feature_levels > len(srcs):
             _len_srcs = len(srcs)
-            for l in range(_len_srcs, self.num_feature_levels):
-                if l == _len_srcs:
-                    src = self.input_proj[l](features[-1].tensors)
+            for idx in range(_len_srcs, self.num_feature_levels):
+                if idx == _len_srcs:
+                    src = self.input_proj[idx](features[-1].tensors)
                 else:
-                    src = self.input_proj[l](srcs[-1])
+                    src = self.input_proj[idx](srcs[-1])
                 m = samples.mask
                 mask = F.interpolate(m[None].float(), size=src.shape[-2:]).to(torch.bool)[0]
                 pos_l = self.backbone[1](NestedTensor(src, mask)).to(src.dtype)
@@ -150,6 +144,7 @@ class DeformableTransformerMIL(nn.Module):
         return [{'pred_logits': a, 'pred_boxes': b}
                 for a, b in zip(outputs_class[:-1], outputs_coord[:-1])]
 
+
 class Loss(nn.Module):
     def __init__(self, alpha: float = 0.25, gamma: float = 2, num_class=2):
         super().__init__()
@@ -158,16 +153,15 @@ class Loss(nn.Module):
         self.num_class = num_class
 
     def forward(self, inputs, targets):
-
         return torch.nn.functional.cross_entropy(inputs, targets)
 
-def build(args):
 
+def build(args):
     device = torch.device(args.device)
 
     num_classes = args.num_class
 
-    backbone = build_WSIFeatureMapBackbone(args)
+    backbone = build_wsi_feature_map_backbone(args)
 
     transformer = build_deforamble_transformer(args)
     model = DeformableTransformerMIL(
